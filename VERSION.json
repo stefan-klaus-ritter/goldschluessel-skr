@@ -1,0 +1,23 @@
+{
+ "version": "2.1",
+ "datum": "2026-06-07",
+ "hinweis": "Integritaets-Manifest Goldschluessel SKR Suite (verschluesselt). Pruefung via system-check.html",
+ "dateien": {
+  "app1-kaeufer.html": "01fcb56674c62be6a24ac11097539ef56800d4e9cbe01e6e062ad006cba8c32d",
+  "app2-sv.html": "dac2c2f3bc3407c4ddd6bcc5ad0a3d730dfc17de2b38c164a4897f9a8e4f3ef4",
+  "baudokuxtrem.html": "773319e6b3899f29e6f841cf005fe62e415c84b22ad9325dbe747fb667e8ab1a",
+  "index.html": "fdb1597038a759687588ee185ac7324f4bf54cb520d90a4c569e5b75ee5966be",
+  "system-check.html": "3998d5b501defb96b6f2675c56081dede8903326093244d06f151b52461ea450",
+  "app1-kaeufer.enc": "9162c20091f631f2a4fa685de7c8b4ad7e72e34ebb282779a94d8b91cbbd3b44",
+  "app2-sv.enc": "58f8041de7049ec6b4c28e50ed0ac9d7228c8a9d8d5c59fa70e04002da9e3fbe",
+  "baudokuxtrem.enc": "a74ca241bd8842afafc8d18b6205e36f081b43a04df8d62df2d2203a2ca8991e",
+  "gskr-login-gate.js": "09f48c7a8ce0c33602f64884624b9814ce4a2f5ba7a09a0221190fb0517b56d8",
+  "gskr-nextcloud.js": "286c821f102e652a62042e1e6933e9c07b2b7b96048bdb9b7b01080854ba0d2c",
+  "gskr-anonymisierer.js": "187cf2ff296da2929ef56ec996ccbede4ecfbd21fa4d8e2bde3888aa6134141d",
+  "gskr-apollon.js": "6734758e57ac61fedc1ed85ec2f985b317a0d3c25c9294b6575ec8adf831c9d1",
+  "gskr-crypto.js": "476027886064356af5e7896c7a324b259d3bbd5536f4f8560e94400bc45cc0c4",
+  "gskr-manifest.json": "d5877522811fd44d5bd63ef02a922d6bbaa60a444ad67c3c6c71034be86cd695",
+  "gskr-service-worker.js": "19a0e5a8d379af0236d2e6f69dd8dbf35112bba26e9ff06fc6392ef2999aceb6",
+  "gskr-zeus-anon-wrapper.js": "3cc7249136f93d48b625508b05122d48b64944609dc2fa928b9d41de01506f2a"
+ }
+}
