@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="de"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0F1117">
+<title>APP 2 · SACHVERSTÄNDIGER · GOLDSCHLÜSSEL SKR</title>
+<style>
+:root{--gold:#D4AF37;--bg:#0F1117;--card:#1A1D26;--txt:#E8E6E0;--mut:#8A8FA0;--err:#E05252}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.card{background:var(--card);border:1px solid #2A2E3A;border-radius:16px;padding:36px 32px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.logo{text-align:center;font-size:13px;letter-spacing:4px;color:var(--gold);font-weight:700;margin-bottom:4px}
+h1{text-align:center;font-size:20px;letter-spacing:1px;margin:10px 0 2px}
+.sub{text-align:center;color:var(--mut);font-size:12px;margin-bottom:26px;letter-spacing:2px}
+.lock{text-align:center;font-size:34px;margin-bottom:10px}
+label{display:block;font-size:11px;color:var(--mut);letter-spacing:1.5px;margin:14px 0 6px}
+input[type=password]{width:100%;background:#11141B;border:1px solid #2A2E3A;border-radius:10px;color:var(--txt);padding:13px 14px;font-size:16px;outline:none}
+input:focus{border-color:var(--gold)}
+button{width:100%;border:0;border-radius:10px;padding:14px;font-size:14px;font-weight:700;letter-spacing:1.5px;cursor:pointer;margin-top:18px}
+.gold{background:linear-gradient(135deg,#D4AF37,#B8932A);color:#14161D}
+.ghost{background:transparent;color:var(--mut);border:1px solid #2A2E3A;margin-top:10px;font-weight:400}
+.row{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:12px;color:var(--mut)}
+.err{color:var(--err);font-size:13px;text-align:center;margin-top:12px;min-height:18px}
+.foot{text-align:center;color:#555B6B;font-size:10px;margin-top:24px;letter-spacing:1px}
+.spin{display:none;text-align:center;color:var(--gold);font-size:13px;margin-top:14px;letter-spacing:1px}
+</style></head><body>
+<div class="card" id="card">
+  <div class="logo">GOLDSCHLÜSSEL · SKR</div>
+  <div class="lock">🔐</div>
+  <h1>APP 2 · SACHVERSTÄNDIGER</h1>
+  <div class="sub">GESCHÜTZTER BEREICH · STUFE-2-VERSCHLÜSSELUNG</div>
+  <div id="pkRow" style="display:none">
+    <button class="gold" id="pkBtn">🔑 MIT PASSKEY ENTSPERREN</button>
+    <button class="ghost" id="pwModeBtn">Stattdessen Master-Passwort eingeben</button>
+  </div>
+  <div id="pwRow">
+    <label>MASTER-PASSWORT</label>
+    <input type="password" id="pw" autocomplete="current-password" placeholder="•••••-•••••-•••••-•••••-•••••">
+    <div class="row" id="pkOptRow" style="display:none">
+      <input type="checkbox" id="pkOpt"><label for="pkOpt" style="margin:0">Auf diesem Gerät per Passkey merken (Fingerabdruck/PIN)</label>
+    </div>
+    <button class="gold" id="go">ENTSCHLÜSSELN &amp; STARTEN</button>
+  </div>
+  <div class="spin" id="spin">ENTSCHLÜSSELE …</div>
+  <div class="err" id="err"></div>
+  <div class="foot">Bausachverständigenbüro Stefan Klaus Ritter<br>AES-GCM-256 · PBKDF2 310.000 · Zero-Knowledge</div>
+</div>
+<script>
+(function(){
+'use strict';
+var ENC='app2-sv.enc', LSK='GSKR_PK_'+ENC, ITER=310000, enc=new TextEncoder(), dec=new TextDecoder();
+var $=function(i){return document.getElementById(i)};
+function b2a(buf){var b=new Uint8Array(buf),s='';for(var i=0;i<b.length;i++)s+=String.fromCharCode(b[i]);return btoa(s)}
+function a2b(s){var bin=atob(s),b=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)b[i]=bin.charCodeAt(i);return b}
+function err(m){$('err').textContent=m;$('spin').style.display='none'}
+async function deriveKey(pw,salt){
+  var km=await crypto.subtle.importKey('raw',enc.encode(pw),'PBKDF2',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2',salt:salt,iterations:ITER,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);
+}
+var encBytesPromise=fetch(ENC,{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('ENC '+r.status);return r.arrayBuffer()});
+async function unseal(pw){
+  $('err').textContent='';$('spin').style.display='block';
+  try{
+    var buf=new Uint8Array(await encBytesPromise);
+    if(dec.decode(buf.slice(0,5))!=='GSKR1')throw new Error('Format');
+    var salt=buf.slice(5,21),iv=buf.slice(21,33),ct=buf.slice(33);
+    var key=await deriveKey(pw,salt);
+    var plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:iv},key,ct);
+    if($('pkOpt')&&$('pkOpt').checked&&!localStorage.getItem(LSK)){try{await pkEnroll(pw)}catch(e){console.warn('Passkey-Enroll übersprungen:',e)}}
+    var html=dec.decode(plain);
+    document.open();document.write(html);document.close();
+  }catch(e){
+    if((e+'').indexOf('ENC')>-1)err('Verschlüsselte App-Datei nicht erreichbar. Verbindung prüfen.');
+    else err('Falsches Master-Passwort.');
+  }
+}
+/* ---- Stufe 4: Passkey (WebAuthn PRF) ---- */
+var PRFSALT=enc.encode('GSKR-PRF-v1');
+function rnd(n){var b=new Uint8Array(n);crypto.getRandomValues(b);return b}
+async function prfSecret(credId){
+  var a=await navigator.credentials.get({publicKey:{challenge:rnd(32),userVerification:'required',
+    allowCredentials:credId?[{type:'public-key',id:credId}]:[],extensions:{prf:{eval:{first:PRFSALT}}}}});
+  var x=a.getClientExtensionResults();
+  if(!x.prf||!x.prf.results||!x.prf.results.first)throw new Error('PRF nicht unterstützt');
+  return {secret:new Uint8Array(x.prf.results.first),id:new Uint8Array(a.rawId)};
+}
+async function kek(secret){return crypto.subtle.importKey('raw',secret,{name:'AES-GCM'},false,['encrypt','decrypt'])}
+async function pkEnroll(pw){
+  var c=await navigator.credentials.create({publicKey:{
+    rp:{name:'Goldschlüssel SKR'},user:{id:rnd(16),name:'skr-master',displayName:'SKR Master'},
+    challenge:rnd(32),pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],
+    authenticatorSelection:{authenticatorAttachment:'platform',residentKey:'preferred',userVerification:'required'},
+    extensions:{prf:{}}}});
+  var p=await prfSecret(new Uint8Array(c.rawId));
+  var iv=rnd(12);
+  var wrapped=await crypto.subtle.encrypt({name:'AES-GCM',iv:iv},await kek(p.secret),enc.encode(pw));
+  localStorage.setItem(LSK,JSON.stringify({id:b2a(c.rawId),iv:b2a(iv),w:b2a(wrapped)}));
+}
+async function pkUnlock(){
+  $('err').textContent='';
+  try{
+    var st=JSON.parse(localStorage.getItem(LSK));
+    var p=await prfSecret(a2b(st.id));
+    var pw=dec.decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:a2b(st.iv)},await kek(p.secret),a2b(st.w)));
+    await unseal(pw);
+  }catch(e){err('Passkey fehlgeschlagen — bitte Master-Passwort eingeben.');showPw()}
+}
+function showPw(){$('pkRow').style.display='none';$('pwRow').style.display='block';$('pw').focus()}
+/* ---- UI ---- */
+$('go').onclick=function(){var v=$('pw').value.trim();if(v.length<10)return err('Master-Passwort eingeben.');unseal(v)};
+$('pw').addEventListener('keydown',function(e){if(e.key==='Enter')$('go').click()});
+if(window.PublicKeyCredential){
+  $('pkOptRow').style.display='flex';
+  if(localStorage.getItem(LSK)){$('pkRow').style.display='block';$('pwRow').style.display='none';
+    $('pkBtn').onclick=pkUnlock;$('pwModeBtn').onclick=showPw;}
+}
+})();
+</script></body></html>

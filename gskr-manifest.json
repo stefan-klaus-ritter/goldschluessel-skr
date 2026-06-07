@@ -1,0 +1,83 @@
+{
+  "name": "Goldschlüssel SKR Suite",
+  "short_name": "Goldschlüssel",
+  "description": "Bausachverständigen-Pro-Suite mit Hauskaufberatung, Baubegleitung und Vollgutachten — vollständig offline-fähig, Ende-zu-Ende verschlüsselt.",
+  "lang": "de-DE",
+  "dir": "ltr",
+  "start_url": "./BaudokuXtremFinally_v1.7-SHOCK.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "orientation": "any",
+  "background_color": "#0F1117",
+  "theme_color": "#D4A843",
+  "categories": ["business", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='36' fill='%231A1D27'/><text x='96' y='122' font-size='80' font-weight='900' text-anchor='middle' font-family='Georgia' fill='%23D4A843'>SKR</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='96' fill='%231A1D27'/><text x='256' y='324' font-size='212' font-weight='900' text-anchor='middle' font-family='Georgia' fill='%23D4A843'>SKR</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Neue Baudoku-Akte",
+      "short_name": "Baudoku",
+      "description": "Bausachverständigen-Dokumentation starten",
+      "url": "./BaudokuXtremFinally_v1.7-SHOCK.html",
+      "icons": [{ "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' rx='18' fill='%23D4A843'/><text x='48' y='62' font-size='40' text-anchor='middle' font-weight='800' fill='%231A1D27'>BD</text></svg>", "sizes": "96x96" }]
+    },
+    {
+      "name": "Hauskaufberatung App 3",
+      "short_name": "App 3 Pro",
+      "description": "Goldschlüssel Pro Bewertung starten",
+      "url": "./App3_Goldschluessel_v3.2-SHOCK.html",
+      "icons": [{ "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' rx='18' fill='%23D4A843'/><text x='48' y='62' font-size='40' text-anchor='middle' font-weight='800' fill='%231A1D27'>A3</text></svg>", "sizes": "96x96" }]
+    },
+    {
+      "name": "Käufer-Begehung App 1",
+      "short_name": "App 1 Käufer",
+      "description": "Mobile Käufer-Begehung",
+      "url": "./App1_Kaeufer_v4.7-SHOCK.html",
+      "icons": [{ "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' rx='18' fill='%23D4A843'/><text x='48' y='62' font-size='40' text-anchor='middle' font-weight='800' fill='%231A1D27'>A1</text></svg>", "sizes": "96x96" }]
+    }
+  ],
+  "share_target": {
+    "action": "./BaudokuXtremFinally_v1.7-SHOCK.html?share=1",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "fotos",
+          "accept": ["image/jpeg", "image/png", "image/heic", "application/pdf"]
+        }
+      ]
+    }
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+gskr",
+      "url": "./BaudokuXtremFinally_v1.7-SHOCK.html?akte=%s"
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "./BaudokuXtremFinally_v1.7-SHOCK.html",
+      "accept": {
+        "application/pdf": [".pdf"],
+        "image/*": [".jpg", ".jpeg", ".png", ".heic"]
+      }
+    }
+  ]
+}
