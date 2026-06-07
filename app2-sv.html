@@ -43,7 +43,7 @@ button{width:100%;border:0;border-radius:10px;padding:14px;font-size:14px;font-w
   </div>
   <div class="spin" id="spin">ENTSCHLÜSSELE …</div>
   <div class="err" id="err"></div>
-  <div class="foot">Bausachverständigenbüro Stefan Klaus Ritter<br>AES-GCM-256 · PBKDF2 310.000 · Zero-Knowledge</div>
+  <div class="foot">Bausachverständigenbüro Stefan Klaus Ritter<br>AES-GCM-256 · PBKDF2 310.000 · Zero-Knowledge · Loader v2.1</div>
 </div>
 <script>
 (function(){
@@ -58,6 +58,10 @@ async function deriveKey(pw,salt){
   return crypto.subtle.deriveKey({name:'PBKDF2',salt:salt,iterations:ITER,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);
 }
 var encBytesPromise=fetch(ENC,{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('ENC '+r.status);return r.arrayBuffer()});
+var FK='GSKR_FAILS_'+ENC, LK='GSKR_LOCK_'+ENC;
+function locked(){var t=+localStorage.getItem(LK)||0;return t>Date.now()?Math.ceil((t-Date.now())/1000):0}
+function fail(){var n=(+localStorage.getItem(FK)||0)+1;if(n>=3){localStorage.setItem(LK,Date.now()+30000);localStorage.removeItem(FK);err('3 Fehlversuche — 30 Sekunden gesperrt.')}else{localStorage.setItem(FK,n);err('Falsches Master-Passwort. ('+n+'/3)')}}
+
 async function unseal(pw){
   $('err').textContent='';$('spin').style.display='block';
   try{
@@ -66,12 +70,13 @@ async function unseal(pw){
     var salt=buf.slice(5,21),iv=buf.slice(21,33),ct=buf.slice(33);
     var key=await deriveKey(pw,salt);
     var plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:iv},key,ct);
+    localStorage.removeItem(FK);localStorage.removeItem(LK);
     if($('pkOpt')&&$('pkOpt').checked&&!localStorage.getItem(LSK)){try{await pkEnroll(pw)}catch(e){console.warn('Passkey-Enroll übersprungen:',e)}}
     var html=dec.decode(plain);
     document.open();document.write(html);document.close();
   }catch(e){
     if((e+'').indexOf('ENC')>-1)err('Verschlüsselte App-Datei nicht erreichbar. Verbindung prüfen.');
-    else err('Falsches Master-Passwort.');
+    else fail();
   }
 }
 /* ---- Stufe 4: Passkey (WebAuthn PRF) ---- */
@@ -107,7 +112,7 @@ async function pkUnlock(){
 }
 function showPw(){$('pkRow').style.display='none';$('pwRow').style.display='block';$('pw').focus()}
 /* ---- UI ---- */
-$('go').onclick=function(){var v=$('pw').value.trim();if(v.length<10)return err('Master-Passwort eingeben.');unseal(v)};
+$('go').onclick=function(){var l=locked();if(l)return err('Gesperrt — bitte '+l+' Sekunden warten.');var v=$('pw').value.trim();if(v.length<10)return err('Master-Passwort eingeben.');unseal(v)};
 $('pw').addEventListener('keydown',function(e){if(e.key==='Enter')$('go').click()});
 if(window.PublicKeyCredential){
   $('pkOptRow').style.display='flex';

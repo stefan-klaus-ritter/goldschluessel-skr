@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System-Check · GOLDSCHLÜSSEL SKR</title>
+<style>
+body{background:#0F1117;color:#E8E6E0;font-family:'Segoe UI',system-ui,sans-serif;margin:0;padding:24px;display:flex;justify-content:center}
+.w{max-width:680px;width:100%}.logo{color:#D4AF37;letter-spacing:4px;font-weight:700;font-size:13px;text-align:center}
+h1{font-size:20px;text-align:center;margin:8px 0 20px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+td,th{padding:8px 10px;border-bottom:1px solid #2A2E3A;text-align:left}
+th{color:#8A8FA0;font-size:11px;letter-spacing:1px}
+.ok{color:#5BBE7A;font-weight:700}.bad{color:#E05252;font-weight:700}.wait{color:#8A8FA0}
+input{background:#11141B;border:1px solid #2A2E3A;border-radius:8px;color:#E8E6E0;padding:10px;width:60%}
+button{background:linear-gradient(135deg,#D4AF37,#B8932A);border:0;border-radius:8px;padding:10px 16px;font-weight:700;cursor:pointer;margin-left:8px}
+.sec{background:#1A1D26;border:1px solid #2A2E3A;border-radius:12px;padding:18px;margin-bottom:16px}
+.foot{text-align:center;color:#555B6B;font-size:10px;margin-top:18px}
+</style></head><body><div class="w">
+<div class="logo">GOLDSCHLÜSSEL · SKR</div><h1>🛡️ System-Check</h1>
+<div class="sec"><table id="t"><tr><th>Datei</th><th>Bytes</th><th>Integrität (SHA-256)</th></tr></table></div>
+<div class="sec">
+  <b>Entschlüsselungs-Test</b> (Master-Passwort wird nur lokal benutzt, nie gesendet)<br><br>
+  <input type="password" id="mp" placeholder="Master-Passwort"><button id="dt">TESTEN</button>
+  <table id="t2"></table>
+</div>
+<div class="foot" id="vinfo">lade VERSION.json …</div>
+</div>
+<script>
+(async function(){
+const dec=new TextDecoder(),enc=new TextEncoder();
+function hex(b){return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+let MAN={};
+try{MAN=await (await fetch('VERSION.json?cb='+Date.now(),{cache:'no-store'})).json();
+  document.getElementById('vinfo').textContent='Version '+MAN.version+' · Stand '+MAN.datum+' · Loader v2.1';
+}catch(e){document.getElementById('vinfo').textContent='VERSION.json fehlt!'}
+const t=document.getElementById('t');
+window.__ENCS={};
+for(const f in (MAN.dateien||{})){
+  const tr=t.insertRow();tr.insertCell().textContent=f;
+  const cb=tr.insertCell(),ci=tr.insertCell();ci.textContent='…';ci.className='wait';
+  try{const r=await fetch(f+'?cb='+Date.now(),{cache:'no-store'});
+    const b=await r.arrayBuffer();cb.textContent=b.byteLength;
+    const h=hex(await crypto.subtle.digest('SHA-256',b));
+    if(f.endsWith('.enc'))window.__ENCS[f]=b;
+    if(h===MAN.dateien[f]){ci.textContent='✓ OK';ci.className='ok'}
+    else{ci.textContent='✗ ABWEICHUNG';ci.className='bad'}
+  }catch(e){ci.textContent='✗ FEHLER';ci.className='bad'}
+}
+document.getElementById('dt').onclick=async function(){
+  const pw=document.getElementById('mp').value.trim();if(pw.length<10)return;
+  const t2=document.getElementById('t2');t2.innerHTML='';
+  for(const f in window.__ENCS){
+    const tr=t2.insertRow();tr.insertCell().textContent=f;const c=tr.insertCell();c.textContent='…';
+    try{const b=new Uint8Array(window.__ENCS[f]);
+      const km=await crypto.subtle.importKey('raw',enc.encode(pw),'PBKDF2',false,['deriveKey']);
+      const k=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b.slice(5,21),iterations:310000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);
+      await crypto.subtle.decrypt({name:'AES-GCM',iv:b.slice(21,33)},k,b.slice(33));
+      c.textContent='✓ entschlüsselbar';c.className='ok';
+    }catch(e){c.textContent='✗ Passwort falsch / Datei defekt';c.className='bad'}
+  }
+};
+})();
+</script></body></html>
