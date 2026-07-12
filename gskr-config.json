@@ -1,0 +1,19 @@
+{
+  "_meta": {
+    "format": "GSKR-Config v1",
+    "version": "1.0",
+    "zweck": "Zentrale Werte-Datei fuer den Werte-Loader (gskr-werte-loader.js). Wird beim App-Start gelesen und stellt die Bewertungs-Konstanten bereit.",
+    "stand": "2026-07-12",
+    "hinweis": "Aenderungen an diesen Werten aendern die Bewertungslogik und sind nur nach interner Freigabe zulaessig."
+  },
+  "bewertung": {
+    "BPI_2010_2026": 1.65,
+    "_BPI_bedeutung": "Baupreisindex-Faktor, Basis 2010, angewandt auf die Normalherstellungskosten.",
+    "NHK_RICHTWERT_2026": 2200,
+    "_NHK_bedeutung": "Normalherstellungskosten 2010 in EUR/m2 Wohnflaeche, Standardstufe 4 (Anlage 1 ImmoWertV / SW-RL)."
+  },
+  "datenbank_stand": {
+    "DB_STAND": "27.04.2026",
+    "DB_HINWEIS": "Foerder- und Marktwerte aendern sich laufend. Vor jeder Beratung sind die aktuellen Werte direkt bei der jeweiligen Quelle zu pruefen."
+  }
+}

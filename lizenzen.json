@@ -1,0 +1,88 @@
+{
+  "version": "1.0",
+  "format": "GSKR-Lizenz-DB v1",
+  "aktualisiert": "2026-07-12T00:00:00Z",
+  "_hinweis": "Oeffentliche Fassung. Enthaelt ausschliesslich SHA-256-Hashes der Lizenz-Codes sowie Laufzeit- und Sperr-Status. Klartext-Zuordnung zu Lizenznehmern wird ausschliesslich lokal im Buero gefuehrt und ist nicht Bestandteil dieser Datei.",
+  "lizenzen": {
+    "0b47ccad611338134207d02ed6e7d5ced6b4b3e7239ebe479faac4da299c76b7": {
+      "ref": "LIZ-01",
+      "vergeben_am": 1781407509409,
+      "laeuft_ab": 1812943509409,
+      "gesperrt": false,
+      "aktiviert_am": null,
+      "geraete_count": 0
+    },
+    "74b1cac2aac29d2df44331742f6cb89e97b225b75c0f1d28e637b9d6296c0ae0": {
+      "ref": "LIZ-02",
+      "vergeben_am": 1781407509409,
+      "laeuft_ab": 1844479509409,
+      "gesperrt": false,
+      "aktiviert_am": null,
+      "geraete_count": 0
+    },
+    "731804fc940d7b11073555e5423d9b8cf36afc28940008878cdc554986bf6e84": {
+      "ref": "LIZ-03",
+      "vergeben_am": 1781407509409,
+      "laeuft_ab": 1812943509409,
+      "gesperrt": false,
+      "aktiviert_am": null,
+      "geraete_count": 0
+    },
+    "8e9db30d6b855889879f26447b6d2be7a30456ad90fb6445778497bbd28da1d6": {
+      "ref": "LIZ-04",
+      "vergeben_am": 1781407509409,
+      "laeuft_ab": 1812943509409,
+      "gesperrt": false,
+      "aktiviert_am": null,
+      "geraete_count": 0
+    },
+    "ce44aaec063953be2c252600d76539bc55dd7f6122523a0862d4130fd769521b": {
+      "ref": "LIZ-05",
+      "vergeben_am": 1781407509409,
+      "laeuft_ab": 1812943509409,
+      "gesperrt": false,
+      "aktiviert_am": null,
+      "geraete_count": 0
+    },
+    "8cdf8d9760f770b2d9f17046985d33e2db5f894dd8f538d0c730e4b6701dd455": {
+      "ref": "LIZ-06",
+      "vergeben_am": 1781407509409,
+      "laeuft_ab": 1812943509409,
+      "gesperrt": false,
+      "aktiviert_am": null,
+      "geraete_count": 0
+    },
+    "cad7366393ed0d3112109dd8950ee63cfcf4102ee473977d148385e6ebe0f94a": {
+      "ref": "LIZ-07",
+      "vergeben_am": 1781407509409,
+      "laeuft_ab": 1812943509409,
+      "gesperrt": false,
+      "aktiviert_am": null,
+      "geraete_count": 0
+    },
+    "71d998e7b49abcfd52f58673e8ff4b09902ad53b52dbc8e154c443d13e5116e3": {
+      "ref": "LIZ-08",
+      "vergeben_am": 1781407509409,
+      "laeuft_ab": 1812943509409,
+      "gesperrt": false,
+      "aktiviert_am": null,
+      "geraete_count": 0
+    },
+    "e80df7fce5fe392cc32ef5e8429eadb0a71e10e7484d982f963980acfbda5c67": {
+      "ref": "LIZ-09",
+      "vergeben_am": 1781407509409,
+      "laeuft_ab": 1812943509409,
+      "gesperrt": false,
+      "aktiviert_am": null,
+      "geraete_count": 0
+    },
+    "02d20838062cff048c4fbe4f379176e5d1b032a84436145ef48e0f8295592d2b": {
+      "ref": "LIZ-10",
+      "vergeben_am": 1781407509409,
+      "laeuft_ab": 1812943509409,
+      "gesperrt": false,
+      "aktiviert_am": null,
+      "geraete_count": 0
+    }
+  }
+}

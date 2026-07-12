@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0F1117">
+<meta name="robots" content="noindex, nofollow">
+<title>Goldschluessel SKR &middot; App-Portal</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231A1D27'/><text x='50' y='62' font-size='42' font-weight='900' text-anchor='middle' font-family='Georgia' fill='%23D4A843'>SKR</text></svg>">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:#0F1117;color:#E7E9EE;
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    min-height:100vh;display:flex;align-items:center;justify-content:center;
+    padding:24px;
+  }
+  .wrap{width:100%;max-width:560px}
+  header{text-align:center;margin-bottom:32px}
+  .logo{
+    width:72px;height:72px;border-radius:18px;background:#1A1D27;
+    display:flex;align-items:center;justify-content:center;margin:0 auto 16px;
+    font-family:Georgia,serif;font-weight:900;font-size:28px;color:#D4A843;
+  }
+  h1{font-size:22px;font-weight:700;letter-spacing:.3px}
+  .sub{margin-top:6px;font-size:14px;color:#8A90A0}
+  .card{
+    background:#161923;border:1px solid #262A38;border-radius:16px;
+    padding:24px;margin-bottom:16px;
+  }
+  label{display:block;font-size:13px;color:#8A90A0;margin-bottom:8px}
+  input[type=password]{
+    width:100%;padding:13px 14px;border-radius:10px;
+    border:1px solid #2E3345;background:#0F1117;color:#E7E9EE;
+    font-size:15px;outline:none;
+  }
+  input[type=password]:focus{border-color:#D4A843}
+  .apps{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+  button.app{
+    padding:18px 14px;border-radius:12px;cursor:pointer;
+    border:1px solid #2E3345;background:#1A1D27;color:#E7E9EE;
+    font-size:15px;font-weight:600;text-align:left;line-height:1.35;
+    transition:border-color .15s,transform .1s;
+  }
+  button.app:hover:not(:disabled){border-color:#D4A843}
+  button.app:active:not(:disabled){transform:scale(.98)}
+  button.app:disabled{opacity:.5;cursor:not-allowed}
+  button.app small{display:block;margin-top:4px;font-weight:400;font-size:12px;color:#8A90A0}
+  .msg{margin-top:16px;font-size:14px;min-height:20px;text-align:center}
+  .msg.err{color:#E5646E}
+  .msg.info{color:#8A90A0}
+  .msg.ok{color:#5FBF7F}
+  footer{text-align:center;font-size:12px;color:#5A6070;line-height:1.7}
+  .bar{height:3px;background:#262A38;border-radius:2px;overflow:hidden;margin-top:14px;display:none}
+  .bar.on{display:block}
+  .bar i{display:block;height:100%;width:35%;background:#D4A843;animation:sl 1.1s ease-in-out infinite}
+  @keyframes sl{0%{margin-left:-35%}100%{margin-left:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="logo">SKR</div>
+    <h1>Goldschl&uuml;ssel &middot; App-Portal</h1>
+    <div class="sub">Bausachverst&auml;ndigenb&uuml;ro Stefan Klaus Ritter</div>
+  </header>
+
+  <div class="card">
+    <label for="mp">Master-Passwort</label>
+    <input type="password" id="mp" autocomplete="current-password" placeholder="Passwort eingeben" autofocus>
+
+    <div class="apps">
+      <button class="app" data-enc="app1-kaeufer.enc">
+        App 1 &middot; K&auml;ufer
+        <small>Hauskaufberatung</small>
+      </button>
+      <button class="app" data-enc="app2-sv.enc">
+        App 2 &middot; SV
+        <small>Sachverst&auml;ndige</small>
+      </button>
+    </div>
+
+    <div class="bar" id="bar"><i></i></div>
+    <div class="msg info" id="msg">Passwort eingeben und App w&auml;hlen.</div>
+  </div>
+
+  <footer>
+    Die App-Kerne sind verschl&uuml;sselt (AES-GCM-256).<br>
+    Entschl&uuml;sselung erfolgt ausschlie&szlig;lich lokal im Browser.
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  // GSKR1-Containerformat:
+  //   b"GSKR1" (5 Byte) | Salt (16 Byte) | IV (12 Byte) | Ciphertext+GCM-Tag
+  //   Schluessel: PBKDF2-HMAC-SHA256, 310.000 Iterationen, 256 Bit
+  var MAGIC = 'GSKR1';
+  var ITER  = 310000;
+
+  var mpEl  = document.getElementById('mp');
+  var msgEl = document.getElementById('msg');
+  var barEl = document.getElementById('bar');
+  var btns  = Array.prototype.slice.call(document.querySelectorAll('button.app'));
+  var busy  = false;
+
+  function say(text, cls){
+    msgEl.textContent = text;
+    msgEl.className = 'msg ' + (cls || 'info');
+  }
+
+  function setBusy(on){
+    busy = on;
+    barEl.className = on ? 'bar on' : 'bar';
+    btns.forEach(function(b){ b.disabled = on; });
+    mpEl.disabled = on;
+  }
+
+  async function ableiteSchluessel(passwort, salt){
+    var basis = await crypto.subtle.importKey(
+      'raw', new TextEncoder().encode(passwort), 'PBKDF2', false, ['deriveKey']
+    );
+    return crypto.subtle.deriveKey(
+      { name:'PBKDF2', salt: salt, iterations: ITER, hash:'SHA-256' },
+      basis,
+      { name:'AES-GCM', length:256 },
+      false,
+      ['decrypt']
+    );
+  }
+
+  async function ladeApp(encDatei, passwort){
+    say('Lade ' + encDatei + ' …', 'info');
+
+    var res = await fetch(encDatei, { cache:'no-store' });
+    if (!res.ok) throw new Error('Datei nicht gefunden (' + res.status + '): ' + encDatei);
+
+    var blob = new Uint8Array(await res.arrayBuffer());
+
+    var magic = new TextDecoder().decode(blob.slice(0, 5));
+    if (magic !== MAGIC) throw new Error('Unbekanntes Dateiformat — kein GSKR1-Container.');
+
+    var salt = blob.slice(5, 21);
+    var iv   = blob.slice(21, 33);
+    var ct   = blob.slice(33);
+
+    say('Entschlüsseln … (das dauert einen Moment)', 'info');
+    var key = await ableiteSchluessel(passwort, salt);
+
+    var klar;
+    try {
+      klar = await crypto.subtle.decrypt({ name:'AES-GCM', iv: iv }, key, ct);
+    } catch (e) {
+      throw new Error('Entschlüsselung fehlgeschlagen — Passwort falsch oder Datei beschädigt.');
+    }
+
+    var html = new TextDecoder('utf-8').decode(klar);
+    say('Starte App …', 'ok');
+
+    // In dasselbe Dokument schreiben: die Basis-URL bleibt erhalten,
+    // damit die App ihre Module (gskr-*.js) relativ nachladen kann.
+    document.open();
+    document.write(html);
+    document.close();
+  }
+
+  function start(encDatei){
+    if (busy) return;
+    var pw = mpEl.value;
+    if (!pw){
+      say('Bitte zuerst das Master-Passwort eingeben.', 'err');
+      mpEl.focus();
+      return;
+    }
+    setBusy(true);
+    ladeApp(encDatei, pw).catch(function(e){
+      setBusy(false);
+      say(e.message || String(e), 'err');
+      mpEl.select();
+    });
+  }
+
+  btns.forEach(function(b){
+    b.addEventListener('click', function(){ start(b.getAttribute('data-enc')); });
+  });
+
+  mpEl.addEventListener('keydown', function(e){
+    if (e.key === 'Enter') btns[0].click();
+  });
+
+  if (!window.crypto || !window.crypto.subtle){
+    say('Dieser Browser unterstützt die nötige Verschlüsselung nicht (WebCrypto fehlt). Bitte einen aktuellen Browser verwenden.', 'err');
+    setBusy(true);
+  }
+})();
+</script>
+</body>
+</html>

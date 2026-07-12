@@ -1,0 +1,22 @@
+{
+ "version": "2.9.3",
+ "datum": "2026-07-12",
+ "hinweis": "Integritaets-Manifest Goldschluessel SKR Suite (verschluesselt). App 3 (Pro) ist nicht Bestandteil der Auslieferung.",
+ "dateien": {
+  "app1-kaeufer.enc": "5582228133601a75311722b02ce5398bf457589124d8d371324bf429624526b8",
+  "app2-sv.enc": "befeef9b24054deddfe2448b4c99599bdc0959aa4a2e2ad8d16a090009daebc3",
+  "index.html": "a62beb0b83f2b5adc7148764760ea5878117a9608079e2da78d6fefedc9d2349",
+  "gskr-login-gate.js": "09f48c7a8ce0c33602f64884624b9814ce4a2f5ba7a09a0221190fb0517b56d8",
+  "gskr-nextcloud.js": "9c595df47ace587e1c13ff31b3fed3bf8eaf638403de413b26d5763a8a8c1138",
+  "gskr-anonymisierer.js": "f1f97128cbabb1e1e6370e07b4fd048cd4be8e86b98be56538771956ba908310",
+  "gskr-anon-tresor.js": "61df5a79ac511a21b6ff1b13287f0ca516cd06ebb04a4710c1688811cbb9eef3",
+  "gskr-cloud-riegel.js": "6b8823feed10ac5ee9fdfd31d20067f6c9a8d2cdca13b1f4ca31d0e3141e58d5",
+  "gskr-crypto.js": "5de1852a07a672272c5f0b8984fcce691da16996a2c9b3188140628a578c0ebe",
+  "gskr-apollon.js": "2bcfb153f9d781e47a10a63da10130df86a2f0b33c97aefb5554038548422c02",
+  "gskr-zeus-anon-wrapper.js": "15f01149a7d9c0d689f7a748ea14e696dddfbac360a3a9d0a5cc15a6a08f55d3",
+  "gskr-werte-loader.js": "0fac4918610b7790c05767573d328530c19906dd9af31413b48c5628f1541bea",
+  "gskr-config.json": "36c604e7f8b8950c58c2a7042459057dea403d907f2d6c488773895c98079ff4",
+  "lizenzen.json": "cdbb5b7635857052087c6d4682dbf4b3ae7e6daeb36899b4384663548791d0fc",
+  "README.md": "7e014822845e28d414fff73ea22445861ecedc68df103ec9fd514499f826bf5f"
+ }
+}
